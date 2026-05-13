@@ -1,6 +1,7 @@
 package com.treinarecife.br.projeto.usuarios.service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,19 @@ public class UsuarioService {
         var novoUsuario = new Usuario(usuarioDTO);
 
         return usuarioRepository.save(novoUsuario);
+    }
+
+    public Usuario findById(Long id) {
+        return usuarioRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Usuário não encontrado para o id " + id));
+    }
+
+    public List<Usuario> buscarPorNome(String nome) {
+        return usuarioRepository.buscarPorNome(nome);
+    }
+
+    public List<Usuario> buscarPorCPF(String cpf) {
+        return usuarioRepository.findByCpf(cpf);
     }
 
 }
