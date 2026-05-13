@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.treinarecife.br.projeto.usuarios.UsuarioRepository;
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateDTO;
+import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioUpdateDTO;
 import com.treinarecife.br.projeto.usuarios.model.enums.StatusUsuario;
 
 import jakarta.persistence.EnumType;
@@ -37,6 +38,14 @@ public class UsuarioService {
 
     public List<Usuario> buscarPorCPF(String cpf) {
         return usuarioRepository.findByCpf(cpf);
+    }
+
+    public void update(UsuarioUpdateDTO dto) {
+        // Implementar
+    }
+
+    public void delete(Long id) {
+        // Implementar
     }
 
 }
