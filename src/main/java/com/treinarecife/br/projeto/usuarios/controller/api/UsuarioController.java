@@ -64,13 +64,13 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public void update(@PathVariable Long id) {
-        // Implementar
+    public void update(@PathVariable Long id, @RequestBody UsuarioUpdateDTO dto) {
+        usuarioService.update(dto, id);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        // Implementar
+        usuarioService.delete(id);
     }
 
 }

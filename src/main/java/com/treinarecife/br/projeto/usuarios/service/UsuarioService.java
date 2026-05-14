@@ -1,6 +1,5 @@
 package com.treinarecife.br.projeto.usuarios.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +9,6 @@ import com.treinarecife.br.projeto.usuarios.UsuarioRepository;
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateDTO;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioUpdateDTO;
-import com.treinarecife.br.projeto.usuarios.model.enums.StatusUsuario;
-
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 
 @Service
 public class UsuarioService {
@@ -40,12 +35,30 @@ public class UsuarioService {
         return usuarioRepository.findByCpf(cpf);
     }
 
-    public void update(UsuarioUpdateDTO dto) {
+    public void update(UsuarioUpdateDTO dto, Long id) {
+        var usuario = this.findById(id);
+
+        if(usuario!=null){
+            if(dto.nome()!=null){
+                usuario.setNome(dto.nome());
+            }
+            if(dto.cpf()!=null){
+                usuario.setCpf(dto.cpf());
+            }
+            if(dto.email()!=null){
+                usuario.setEmail(dto.email());
+            }
+        }
+
+
         // Implementar
     }
 
     public void delete(Long id) {
-        // Implementar
+        // Outra opcao verificando existencia
+        // var usuario = this.findById(id);
+        // this.usuarioRepository.delete(usuario);
+        this.usuarioRepository.deleteById(id);
     }
 
 }

@@ -1,5 +1,9 @@
 package com.treinarecife.br.projeto.usuarios.model.dto;
 
-public class UsuarioUpdateDTO {
+public record UsuarioUpdateDTO(
+    String nome,
+    String cpf,
+    String email
+) {
 
 }
