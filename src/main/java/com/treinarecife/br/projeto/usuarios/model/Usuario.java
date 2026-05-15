@@ -2,14 +2,13 @@ package com.treinarecife.br.projeto.usuarios.model;
 
 import java.time.LocalDate;
 
-import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateDTO;
+import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateRequest;
 import com.treinarecife.br.projeto.usuarios.model.enums.StatusUsuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumeratedValue;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,12 +44,12 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private StatusUsuario status;
 
-    public Usuario(UsuarioCreateDTO dto) {
-        this.nome = dto.getNome();
-        this.cpf = dto.getCpf();
-        this.email = dto.getEmail();
-        this.senha = dto.getSenha();
-        this.dataNascimento = dto.getDataNascimento();
-        this.status = dto.getStatus();
+    public Usuario(UsuarioCreateRequest dto) {
+        this.nome = dto.nome();
+        this.cpf = dto.cpf();
+        this.email = dto.email();
+        this.senha = dto.senha();
+        this.dataNascimento = dto.dataNascimento();
+        this.status = dto.status();
     }
 }
