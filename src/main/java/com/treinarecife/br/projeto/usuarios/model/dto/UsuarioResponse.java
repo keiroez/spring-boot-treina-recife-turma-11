@@ -1,6 +1,7 @@
 package com.treinarecife.br.projeto.usuarios.model.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
 import com.treinarecife.br.projeto.usuarios.model.enums.StatusUsuario;
@@ -11,16 +12,18 @@ public record UsuarioResponse(
      String email,
      String senha,
      LocalDate dataNascimento,
-     StatusUsuario status
+     StatusUsuario status,
+     List<String> projetos
 ) {
-    public UsuarioResponse(Usuario usuario) {
+    public UsuarioResponse(Usuario usuario, List<String> projetos) {
         this(
             usuario.getNome(),
             usuario.getCpf(),
             usuario.getEmail(),
             usuario.getSenha(),
             usuario.getDataNascimento(),
-            usuario.getStatus()
+            usuario.getStatus(),
+            projetos
         );
     }
 }

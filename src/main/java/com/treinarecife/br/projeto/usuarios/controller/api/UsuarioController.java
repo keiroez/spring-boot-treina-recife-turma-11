@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.treinarecife.br.projeto.projeto.model.Projeto;
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateRequest;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioResponse;
@@ -37,7 +38,15 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public UsuarioResponse findById(@PathVariable Long id) {
         var usuario = usuarioService.findById(id);
-        var dto = new UsuarioResponse(usuario);
+
+        List<Projeto> projetos = usuario.getListaProjetos();
+        List<String> descricoes = new ArrayList<>();
+
+        for(Projeto projeto: projetos){
+            descricoes.add(projeto.getDescricao());
+        }
+
+        var dto = new UsuarioResponse(usuario, descricoes);
         return dto;
     }
 

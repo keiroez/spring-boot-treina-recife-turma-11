@@ -1,7 +1,9 @@
 package com.treinarecife.br.projeto.usuarios.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.treinarecife.br.projeto.projeto.model.Projeto;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateRequest;
 import com.treinarecife.br.projeto.usuarios.model.enums.StatusUsuario;
 
@@ -12,6 +14,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,6 +47,10 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private StatusUsuario status;
+
+    @OneToMany
+    @JoinColumn(name="idusuarios")
+    private List<Projeto> listaProjetos;
 
     public Usuario(UsuarioCreateRequest dto) {
         this.nome = dto.nome();
