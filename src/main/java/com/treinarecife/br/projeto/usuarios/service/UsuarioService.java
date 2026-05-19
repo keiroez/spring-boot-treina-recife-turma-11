@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.treinarecife.br.projeto.usuarios.UsuarioRepository;
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
-import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateDTO;
-import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioUpdateDTO;
+import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateRequest;
+import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioUpdateRequest;
+import com.treinarecife.br.projeto.usuarios.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
@@ -16,7 +16,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Usuario inserir(UsuarioCreateDTO usuarioDTO) {
+    public Usuario inserir(UsuarioCreateRequest usuarioDTO) {
         var novoUsuario = new Usuario(usuarioDTO);
 
         return usuarioRepository.save(novoUsuario);
@@ -35,7 +35,7 @@ public class UsuarioService {
         return usuarioRepository.findByCpf(cpf);
     }
 
-    public void update(UsuarioUpdateDTO dto, Long id) {
+    public void update(UsuarioUpdateRequest dto, Long id) {
         var usuario = this.findById(id);
 
         if(usuario!=null){
@@ -48,10 +48,10 @@ public class UsuarioService {
             if(dto.email()!=null){
                 usuario.setEmail(dto.email());
             }
+            usuarioRepository.save(usuario);
         }
 
-
-        // Implementar
+        
     }
 
     public void delete(Long id) {
