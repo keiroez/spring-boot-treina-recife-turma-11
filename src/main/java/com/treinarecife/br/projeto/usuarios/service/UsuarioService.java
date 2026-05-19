@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.treinarecife.br.projeto.usuarios.UsuarioRepository;
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateRequest;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioUpdateRequest;
+import com.treinarecife.br.projeto.usuarios.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {

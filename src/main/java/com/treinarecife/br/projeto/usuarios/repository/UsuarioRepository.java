@@ -1,4 +1,4 @@
-package com.treinarecife.br.projeto.usuarios;
+package com.treinarecife.br.projeto.usuarios.repository;
 
 import java.util.List;
 
