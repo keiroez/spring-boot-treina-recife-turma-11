@@ -42,7 +42,7 @@ public class UsuarioController {
         List<Projeto> projetos = usuario.getListaProjetos();
         List<String> descricoes = new ArrayList<>();
 
-        for(Projeto projeto: projetos){
+        for (Projeto projeto : projetos) {
             descricoes.add(projeto.getDescricao());
         }
 
@@ -56,7 +56,7 @@ public class UsuarioController {
 
         List<UsuarioResponse> listaRetorno = new ArrayList<>();
         for (Usuario usuario : usuarios) {
-            UsuarioResponse usuarioDTO = new UsuarioResponse(usuario);
+            UsuarioResponse usuarioDTO = new UsuarioResponse(usuario, usuario.montarDescricaoProjetos());
             listaRetorno.add(usuarioDTO);
         }
         return listaRetorno;
@@ -68,7 +68,7 @@ public class UsuarioController {
 
         List<UsuarioResponse> listaRetorno = new ArrayList<>();
         for (Usuario usuario : usuarios) {
-            UsuarioResponse usuarioDTO = new UsuarioResponse(usuario);
+            UsuarioResponse usuarioDTO = new UsuarioResponse(usuario, usuario.montarDescricaoProjetos());
             listaRetorno.add(usuarioDTO);
         }
         return listaRetorno;

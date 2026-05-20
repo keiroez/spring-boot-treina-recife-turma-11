@@ -1,7 +1,9 @@
 package com.treinarecife.br.projeto.usuarios.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.treinarecife.br.projeto.projeto.model.Projeto;
 import com.treinarecife.br.projeto.usuarios.model.dto.UsuarioCreateRequest;
@@ -49,7 +51,7 @@ public class Usuario {
     private StatusUsuario status;
 
     @OneToMany
-    @JoinColumn(name="idusuarios")
+    @JoinColumn(name = "idusuarios")
     private List<Projeto> listaProjetos;
 
     public Usuario(UsuarioCreateRequest dto) {
@@ -59,5 +61,14 @@ public class Usuario {
         this.senha = dto.senha();
         this.dataNascimento = dto.dataNascimento();
         this.status = dto.status();
+    }
+
+    public List<String> montarDescricaoProjetos() {
+        if (this.getListaProjetos() != null) {
+            return this.getListaProjetos().stream()
+                    .map(Projeto::getDescricao)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 }

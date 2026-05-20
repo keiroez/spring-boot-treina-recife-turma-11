@@ -2,6 +2,8 @@ package com.treinarecife.br.projeto.projeto.model;
 
 import java.time.LocalDate;
 
+import com.treinarecife.br.projeto.projeto.model.dto.ProjetoCreateRequest;
+import com.treinarecife.br.projeto.projeto.model.dto.ProjetoResponse;
 import com.treinarecife.br.projeto.projeto.model.enums.StatusProjeto;
 import com.treinarecife.br.projeto.usuarios.model.Usuario;
 
@@ -45,5 +47,23 @@ public class Projeto {
     @ManyToOne
     @JoinColumn(name="idusuarios")
     private  Usuario responsavel;
+
+    public Projeto(ProjetoCreateRequest dto, Usuario responsavel) {
+        this.nome = dto.nome();
+        this.descricao = dto.descricao();
+        this.dataInicio = dto.dataInicio();
+        this.dataConclusao  =dto.dataConclusao();
+        this.status = dto.status();
+        this.responsavel = responsavel;
+    }
+
+    public ProjetoResponse toDTO(){
+        return new ProjetoResponse(
+            this.nome,
+            this.descricao,
+            this.dataInicio,
+            this.getDataConclusao()
+        );
+    }
 
 }
