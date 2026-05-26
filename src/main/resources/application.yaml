@@ -1,3 +1,13 @@
 spring:
   application:
-    name: demo
+    name: projetoVendas
+  datasource:
+    url: jdbc:mysql://localhost/treinaSpring
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        ddl-auto: validate
