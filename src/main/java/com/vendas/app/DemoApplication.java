@@ -1,13 +1,13 @@
-package com.treinarecife.br;
+package com.vendas.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ProjetoApplication {
+public class DemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ProjetoApplication.class, args);
+		SpringApplication.run(DemoApplication.class, args);
 	}
 
 }

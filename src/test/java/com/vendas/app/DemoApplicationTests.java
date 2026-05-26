@@ -1,10 +1,10 @@
-package com.treinarecife.br;
+package com.vendas.app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProjetoApplicationTests {
+class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
