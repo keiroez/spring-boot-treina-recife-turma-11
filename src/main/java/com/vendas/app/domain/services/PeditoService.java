@@ -13,8 +13,17 @@ import java.util.List;
 public class PeditoService implements CRUDInterface<Pedido> {
     private final PedidoRepository pedidoRepository;
 
+    private final List<ValidacaoInclusao> validacoesInclusao;
+
     @Override
     public Pedido save(Pedido pedido) {
+
+//        for(ValidacaoInclusao validacao : validacoesInclusao){
+//            validacao.validar();
+//        }
+
+        validacoesInclusao.forEach(validacao -> validacao.validar());
+
         return pedidoRepository.save(pedido);
     }
 

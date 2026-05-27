@@ -1,13 +1,25 @@
 package com.vendas.app;
 
+import com.vendas.app.domain.models.Produto;
+import com.vendas.app.domain.services.ProdutoService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 @SpringBootTest
 class DemoApplicationTests {
 
+	@Autowired
+	private ProdutoService produtoService;
+
 	@Test
 	void contextLoads() {
+		List<Produto> produtos = produtoService.buscarProdutosDinamicos("note", null, null);
+
+		Assertions.assertNotNull(produtos);
 	}
 
 }
