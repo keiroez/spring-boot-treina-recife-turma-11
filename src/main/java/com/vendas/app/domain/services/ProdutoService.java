@@ -1,6 +1,5 @@
 package com.vendas.app.domain.services;
 
-import com.vendas.app.controller.request.ProdutoDTO;
 import com.vendas.app.domain.CRUDInterface;
 import com.vendas.app.domain.models.Produto;
 import com.vendas.app.domain.repository.ProdutoRepository;
@@ -16,7 +15,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProdutoService  implements CRUDInterface <Produto> {
+public class ProdutoService implements CRUDInterface<Produto> {
+
     private final ProdutoRepository produtoRepository;
 
     @Override
@@ -36,36 +36,44 @@ public class ProdutoService  implements CRUDInterface <Produto> {
 
     @Override
     public void update(Produto produto) {
-        this.produtoRepository.save(produto);
+        produtoRepository.save(produto);
     }
 
     @Override
     public void delete(Long id) {
-        this.produtoRepository.deleteById(id);
+        produtoRepository.deleteById(id);
     }
 
     public Page<Produto> findAllPage(Pageable pageable) {
         return produtoRepository.findAll(pageable);
     }
 
+    /**
+     * Monta a query dinamicamente combinando Specifications com .and().
+     * Cada filtro só é adicionado se o parâmetro for não-nulo.
+     * Se nenhum filtro for informado, spec permanece null e o findAll(null)
+     * do Spring Data traz todos os registros sem lançar erro.
+     */
     public List<Produto> buscarProdutosDinamicos(String nome, BigDecimal precoMin, BigDecimal precoMax) {
 
         Specification<Produto> spec = null;
 
-        // Se o nome não for nulo, cria ou combina a especificação
         if (nome != null && !nome.trim().isEmpty()) {
-            spec = (spec == null) ? ProdutoSpecifications.porNome(nome) : spec.and(ProdutoSpecifications.porNome(nome));
+            spec = ProdutoSpecifications.porNome(nome);
         }
 
         if (precoMin != null) {
-            spec = (spec == null) ? ProdutoSpecifications.precoMaiorOuIgualA(precoMin) : spec.and(ProdutoSpecifications.precoMaiorOuIgualA(precoMin));
+            spec = (spec == null)
+                    ? ProdutoSpecifications.precoMaiorOuIgualA(precoMin)
+                    : spec.and(ProdutoSpecifications.precoMaiorOuIgualA(precoMin));
         }
 
         if (precoMax != null) {
-            spec = (spec == null) ? ProdutoSpecifications.precoMenorOuIgualA(precoMax) : spec.and(ProdutoSpecifications.precoMenorOuIgualA(precoMax));
+            spec = (spec == null)
+                    ? ProdutoSpecifications.precoMenorOuIgualA(precoMax)
+                    : spec.and(ProdutoSpecifications.precoMenorOuIgualA(precoMax));
         }
 
-        // Se nenhum filtro foi passado (spec continua null), o findAll(null) traz todos os registros sem dar erro
         return produtoRepository.findAll(spec);
     }
 }

@@ -5,12 +5,18 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 
+/**
+ * Padrão Specification: cada método retorna um critério de filtro isolado e reutilizável.
+ * As Specifications podem ser combinadas com .and() / .or() para montar queries dinâmicas
+ * sem precisar escrever JPQL ou SQL manualmente.
+ */
 public class ProdutoSpecifications {
-    // Filtro por Nome (Case-Insensitive e busca parcial)
+
+    // Busca parcial e case-insensitive: LIKE '%nome%' ignorando maiúsculas/minúsculas.
     public static Specification<Produto> porNome(String nome) {
         return (root, query, criteriaBuilder) -> {
             if (nome == null || nome.trim().isEmpty()) {
-                return criteriaBuilder.conjunction(); // Retorna um "where 1=1" (não filtra nada)
+                return criteriaBuilder.conjunction(); // "WHERE 1=1" — não filtra nada
             }
             return criteriaBuilder.like(
                     criteriaBuilder.lower(root.get("nome")),
@@ -19,7 +25,6 @@ public class ProdutoSpecifications {
         };
     }
 
-    // Filtro por Preço Mínimo
     public static Specification<Produto> precoMaiorOuIgualA(BigDecimal precoMin) {
         return (root, query, criteriaBuilder) -> {
             if (precoMin == null) {
@@ -29,7 +34,6 @@ public class ProdutoSpecifications {
         };
     }
 
-    // Filtro por Preço Máximo
     public static Specification<Produto> precoMenorOuIgualA(BigDecimal precoMax) {
         return (root, query, criteriaBuilder) -> {
             if (precoMax == null) {

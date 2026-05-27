@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("produtos")
 public class ProdutoController extends AbstractController<Produto, ProdutoDTO> {
+
     private final ProdutoService produtoService;
 
     protected ProdutoController(CRUDInterface<Produto> crud, ProdutoService produtoService) {
@@ -22,17 +23,23 @@ public class ProdutoController extends AbstractController<Produto, ProdutoDTO> {
         this.produtoService = produtoService;
     }
 
-
+    // Paginação: o Spring resolve automaticamente os parâmetros ?page=0&size=20&sort=nome
+    // a partir do Pageable. O @PageableDefault define os valores padrão.
     @GetMapping("/page")
-    private Page<Produto> findAllPage(@PageableDefault Pageable pageable) {
-        return produtoService.findAllPage(pageable);
+    public Page<ProdutoDTO> findAllPage(@PageableDefault Pageable pageable) {
+        return produtoService.findAllPage(pageable).map(this::convertToDto);
     }
 
+    // Filtros dinâmicos: cada parâmetro é opcional (required = false).
+    // Quando nulo, o filtro correspondente simplesmente não é aplicado.
     @GetMapping("/filtro")
-    private List<Produto> findAllFiltroPage(
-                                            @RequestParam(required = false) String nome,
-                                            @RequestParam(required = false) BigDecimal precoMin,
-                                            @RequestParam(required = false) BigDecimal precoMax) {
-        return produtoService.buscarProdutosDinamicos(nome, precoMin, precoMax);
+    public List<ProdutoDTO> findAllFiltro(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) BigDecimal precoMin,
+            @RequestParam(required = false) BigDecimal precoMax) {
+        return produtoService.buscarProdutosDinamicos(nome, precoMin, precoMax)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
     }
 }

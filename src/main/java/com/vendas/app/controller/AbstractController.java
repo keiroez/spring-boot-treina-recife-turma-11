@@ -5,11 +5,23 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+/**
+ * Controller genérico que centraliza os endpoints de CRUD.
+ *
+ * Generics: <T> é a entidade JPA, <D> é o DTO correspondente.
+ * O construtor recebe Class<T> e Class<D> porque o ModelMapper precisa
+ * da referência em tempo de execução para fazer o mapeamento — Java apaga
+ * informações de tipo genérico em runtime (type erasure), então precisamos
+ * passar explicitamente.
+ */
 @RestController
 public abstract class AbstractController<T, D> {
 
-    private final CRUDInterface<T> crud; // Removido o @Autowired daqui
+    private final CRUDInterface<T> crud;
 
+    // O ModelMapper converte automaticamente campos com o mesmo nome entre entidade e DTO.
     @Autowired
     protected ModelMapper modelMapper;
 
@@ -32,10 +44,16 @@ public abstract class AbstractController<T, D> {
         return modelMapper.map(dto, entityClass);
     }
 
+    @GetMapping
+    public List<D> findAll() {
+        return crud.findAll().stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
     @GetMapping("/{id}")
     public D findById(@PathVariable Long id) {
-        T entity = crud.findById(id);
-        return convertToDto(entity);
+        return convertToDto(crud.findById(id));
     }
 
     @PostMapping
@@ -47,8 +65,7 @@ public abstract class AbstractController<T, D> {
 
     @PutMapping
     public void update(@RequestBody D dto) {
-        T entity = convertToEntity(dto);
-        crud.update(entity);
+        crud.update(convertToEntity(dto));
     }
 
     @DeleteMapping("/{id}")

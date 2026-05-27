@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-@Table(name = "produto")
+@Table(name = "pedido")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,7 +25,9 @@ public class Pedido {
 
     private String cliente;
 
-    @OneToMany
+    // ManyToOne: muitos pedidos podem referenciar o mesmo produto.
+    // A coluna produto_id fica na tabela pedido (dono do relacionamento).
+    @ManyToOne
     @JoinColumn(name = "produto_id")
-    private List<Produto> produto;
+    private Produto produto;
 }

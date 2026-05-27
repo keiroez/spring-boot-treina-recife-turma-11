@@ -10,20 +10,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PeditoService implements CRUDInterface<Pedido> {
+public class PedidoService implements CRUDInterface<Pedido> {
+
     private final PedidoRepository pedidoRepository;
 
+    /**
+     * O Spring injeta aqui, automaticamente, todos os beans que implementam
+     * ValidacaoInclusao (ValidacaoNomeVazio, ValidarPrecoService, etc.).
+     * Isso é o padrão Strategy: o serviço não conhece as regras — apenas as executa.
+     */
     private final List<ValidacaoInclusao> validacoesInclusao;
 
     @Override
     public Pedido save(Pedido pedido) {
-
-//        for(ValidacaoInclusao validacao : validacoesInclusao){
-//            validacao.validar();
-//        }
-
-        validacoesInclusao.forEach(validacao -> validacao.validar());
-
+        validacoesInclusao.forEach(validacao -> validacao.validar(pedido));
         return pedidoRepository.save(pedido);
     }
 
@@ -36,7 +36,6 @@ public class PeditoService implements CRUDInterface<Pedido> {
     public List<Pedido> findAll() {
         return pedidoRepository.findAll();
     }
-
 
     @Override
     public void update(Pedido pedido) {
