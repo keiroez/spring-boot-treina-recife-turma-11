@@ -54,7 +54,7 @@ public class ProdutoService implements CRUDInterface<Produto> {
      * Se nenhum filtro for informado, spec permanece null e o findAll(null)
      * do Spring Data traz todos os registros sem lançar erro.
      */
-    public List<Produto> buscarProdutosDinamicos(String nome, BigDecimal precoMin, BigDecimal precoMax) {
+    public List<Produto> buscarProdutosDinamicos(String nome, BigDecimal precoMin, BigDecimal precoMax, BigDecimal preco) {
 
         Specification<Produto> spec = null;
 
@@ -72,6 +72,12 @@ public class ProdutoService implements CRUDInterface<Produto> {
             spec = (spec == null)
                     ? ProdutoSpecifications.precoMenorOuIgualA(precoMax)
                     : spec.and(ProdutoSpecifications.precoMenorOuIgualA(precoMax));
+        }
+
+        if (preco != null) {
+            spec = (spec == null)
+                    ? ProdutoSpecifications.precoIgual(preco)
+                    : spec.and(ProdutoSpecifications.precoIgual(preco));
         }
 
         return produtoRepository.findAll(spec);

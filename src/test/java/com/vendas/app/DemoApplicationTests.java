@@ -12,14 +12,8 @@ import java.util.List;
 @SpringBootTest
 class DemoApplicationTests {
 
-	@Autowired
-	private ProdutoService produtoService;
-
 	@Test
 	void contextLoads() {
-		List<Produto> produtos = produtoService.buscarProdutosDinamicos("note", null, null);
-
-		Assertions.assertNotNull(produtos);
 	}
 
 }

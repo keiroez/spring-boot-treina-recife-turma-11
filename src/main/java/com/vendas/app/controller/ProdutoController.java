@@ -36,8 +36,9 @@ public class ProdutoController extends AbstractController<Produto, ProdutoDTO> {
     public List<ProdutoDTO> findAllFiltro(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) BigDecimal precoMin,
-            @RequestParam(required = false) BigDecimal precoMax) {
-        return produtoService.buscarProdutosDinamicos(nome, precoMin, precoMax)
+            @RequestParam(required = false) BigDecimal precoMax,
+            @RequestParam(required = false) BigDecimal preco) {
+        return produtoService.buscarProdutosDinamicos(nome, precoMin, precoMax, preco)
                 .stream()
                 .map(this::convertToDto)
                 .toList();

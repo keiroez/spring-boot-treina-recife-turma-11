@@ -58,7 +58,7 @@ public class ProdutoServiceTest {
         when(produtoRepository.findAll((Specification<Produto>) null)).thenReturn(listaProdutos);
 
         // Act
-        List<Produto> resultado = produtoService.buscarProdutosDinamicos(null, null, null);
+        List<Produto> resultado = produtoService.buscarProdutosDinamicos(null, null, null, null);
 
         // Assert
         assertNotNull(resultado);
@@ -77,7 +77,7 @@ public class ProdutoServiceTest {
         when(produtoRepository.findAll(ArgumentMatchers.<Specification<Produto>>any())).thenReturn(listaFiltrada);
 
         // Act
-        List<Produto> resultado = produtoService.buscarProdutosDinamicos("Teclado", new BigDecimal("100.00"), new BigDecimal("200.00"));
+        List<Produto> resultado = produtoService.buscarProdutosDinamicos("Teclado", new BigDecimal("100.00"), new BigDecimal("200.00"), null);
 
         // Assert
         assertNotNull(resultado);

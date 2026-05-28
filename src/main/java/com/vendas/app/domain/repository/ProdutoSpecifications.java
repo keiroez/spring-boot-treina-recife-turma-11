@@ -42,4 +42,13 @@ public class ProdutoSpecifications {
             return criteriaBuilder.lessThanOrEqualTo(root.get("preco"), precoMax);
         };
     }
+
+    public static Specification<Produto> precoIgual(BigDecimal preco) {
+        return (root, query, criteriaBuilder) -> {
+            if (preco == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("preco"), preco);
+        };
+    }
 }
