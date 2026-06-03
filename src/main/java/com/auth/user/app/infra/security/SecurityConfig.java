@@ -1,5 +1,6 @@
 package com.auth.user.app.infra.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,17 +9,17 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private SecurityFilter securityFilter;
 
     // Lista de rotas do Swagger para manter o código limpo e organizado
     private static final String[] SWAGGER_WHITELIST = {
@@ -45,14 +46,10 @@ public class SecurityConfig {
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         // Permite que qualquer pessoa acesse o POST de usuários (para poder se cadastrar no sistema)
                         .requestMatchers(HttpMethod.POST, "/usuarios/**").permitAll()
-                        // Qualquer outra requisição no sistema EXIGE que o usuário esteja autenticado
-//                        .requestMatchers(HttpMethod.GET, "/usuarios/**").permitAll()
-
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .anyRequest().authenticated()
-                ).formLogin(form -> form
-                        // .loginPage("/login") // Opcional: Se você tiver uma página HTML própria
-                        .permitAll() // Permite que todos acessem a página de login
                 )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

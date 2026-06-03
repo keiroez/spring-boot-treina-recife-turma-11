@@ -55,6 +55,6 @@ public class Usuario implements Serializable, UserDetails {
 
     @Override
     public String getUsername() {
-        return this.login; // Diz ao Spring que o nosso "username" de login é o e-mail
+        return this.email; // Diz ao Spring que o nosso "username" de login é o e-mail
     }
 }

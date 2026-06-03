@@ -14,11 +14,11 @@ public class AutenticacaoService implements UserDetailsService {
     private UsuarioRepository repository;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        UserDetails usuario = repository.findByLogin(login);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserDetails usuario = repository.findByEmail(email);
 
         if (usuario == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + login);
+            throw new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email);
         }
 
         return usuario; // Retorna o usuário moldado para o ecossistema do Spring Security
