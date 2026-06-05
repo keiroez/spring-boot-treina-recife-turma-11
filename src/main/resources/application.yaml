@@ -2,7 +2,7 @@ spring:
   application:
     name: projeto
   datasource:
-    url: jdbc:mysql://localhost/sgp2
+    url: jdbc:mysql://localhost/gestao_projetos
     username: root
     password: root
   jpa:
@@ -11,3 +11,8 @@ spring:
       hibernate:
         format_sql: true
         ddl-auto: validate
+
+api:
+  security:
+    token:
+      secret: 123456
