@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head th:replace="~{fragments/layout :: head(${projeto != null} ? 'Editar Projeto' : 'Novo Projeto')}"></head>
+<body>
+
+<th:block th:replace="~{fragments/layout :: navbar}"></th:block>
+
+<div class="container-fluid">
+    <div class="row g-0">
+        <div class="col-md-2">
+            <th:block th:replace="~{fragments/layout :: sidebar(activePage='projetos')}"></th:block>
+        </div>
+        <div class="col-md-10 main-content">
+
+            <div class="page-header">
+                <h4 class="fw-bold mb-0">
+                    <i class="bi bi-folder2-open me-2"></i>
+                    <span th:text="${projeto != null} ? 'Editar Projeto' : 'Novo Projeto'"></span>
+                </h4>
+                <a href="/app/projetos" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm" style="max-width: 700px;">
+                <div class="card-body p-4">
+                    <form th:action="${projeto != null} ? @{/app/projetos/{id}/editar(id=${projeto.id})} : @{/app/projetos/novo}"
+                          method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome <span class="text-danger">*</span></label>
+                            <input type="text" name="nome" class="form-control" maxlength="150" required
+                                   th:value="${projeto?.nome}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Descrição</label>
+                            <textarea name="descricao" class="form-control" rows="3"
+                                      th:text="${projeto?.descricao}"></textarea>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                                <select name="status" class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="s : ${statusList}"
+                                            th:value="${s}"
+                                            th:text="${s}"
+                                            th:selected="${projeto?.status == s}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Responsável <span class="text-danger">*</span></label>
+                                <select name="responsavelId" class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="u : ${usuarios}"
+                                            th:value="${u.id}"
+                                            th:text="${u.nome} + ' (' + ${u.email} + ')'"
+                                            th:selected="${projeto?.responsavel?.id == u.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Data de Início <span class="text-danger">*</span></label>
+                                <input type="date" name="dataInicio" class="form-control" required
+                                       th:value="${projeto?.dataInicio}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Data de Fim</label>
+                                <input type="date" name="dataFim" class="form-control"
+                                       th:value="${projeto?.dataFim}">
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-floppy me-1"></i>
+                                <span th:text="${projeto != null} ? 'Salvar Alterações' : 'Criar Projeto'"></span>
+                            </button>
+                            <a href="/app/projetos" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

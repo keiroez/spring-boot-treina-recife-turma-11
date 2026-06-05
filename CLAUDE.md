@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **JPA/Hibernate**, **Bean Validation**, **Lombok**, **BCrypt**
 - **Java Records** para todos os DTOs
 - **RFC 7807 ProblemDetail** para tratamento de erros
+- **SpringDoc OpenAPI 3.x** (`springdoc-openapi-starter-webmvc-ui`) — Swagger UI em `/swagger-ui/index.html`
 
 ## Comandos
 
@@ -50,7 +51,7 @@ controller → service → repository → entity
 
 ### Pacote base: `com.example.gestao`
 ```
-config/          ← SecurityConfig
+config/          ← SecurityConfig, OpenApiConfig
 controller/      ← Auth, Usuario, Projeto, Tarefa
 dto/             ← auth/, usuario/, projeto/, tarefa/ (Java Records)
 entity/          ← Usuario (implements UserDetails), Projeto, Tarefa
@@ -86,3 +87,9 @@ Validadores ativos: `ValidadorProjetoAtivo` (projeto deve ser `EM_ANDAMENTO`), `
 - Token JWT contém: subject=email, claim `role`.
 - `SecurityFilter` lê `Authorization: Bearer <token>` e injeta o contexto de segurança.
 - Controle granular via `@PreAuthorize("hasRole('ADMIN')")` nos Controllers.
+- Rotas do Swagger (`/swagger-ui/**`, `/v3/api-docs/**`) liberadas sem autenticação em `SecurityConfig`.
+
+### JPA e Flyway
+- `spring.jpa.hibernate.ddl-auto=none` — Flyway é o único responsável pelo schema.
+- Flyway usa defaults do Spring Boot: localização `classpath:db/migration`, habilitado automaticamente com `flyway-core` no classpath.
+- **Não usar `ddl-auto=validate`** com Spring Boot 4.x: o Hibernate valida antes do Flyway criar as tabelas (bug de ordering).

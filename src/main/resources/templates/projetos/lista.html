@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head th:replace="~{fragments/layout :: head('Projetos')}"></head>
+<body>
+
+<th:block th:replace="~{fragments/layout :: navbar}"></th:block>
+
+<div class="container-fluid">
+    <div class="row g-0">
+        <div class="col-md-2">
+            <th:block th:replace="~{fragments/layout :: sidebar(activePage='projetos')}"></th:block>
+        </div>
+        <div class="col-md-10 main-content">
+
+            <div class="page-header">
+                <h4 class="fw-bold mb-0"><i class="bi bi-folder2-open me-2"></i>Projetos</h4>
+                <a href="/app/projetos/novo" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Novo Projeto
+                </a>
+            </div>
+
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div th:if="${projetos.empty}" class="p-4 text-center text-muted">
+                        <i class="bi bi-folder-x fs-1 d-block mb-2"></i>
+                        Nenhum projeto cadastrado. <a href="/app/projetos/novo">Criar o primeiro</a>.
+                    </div>
+                    <div class="table-responsive" th:if="${!projetos.empty}">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>Status</th>
+                                <th>Responsável</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="p : ${projetos}">
+                                <td class="text-muted small" th:text="${p.id}"></td>
+                                <td class="fw-semibold" th:text="${p.nome}"></td>
+                                <td>
+                                    <span class="badge rounded-pill"
+                                          th:classappend="'badge-' + ${p.status}"
+                                          th:text="${p.status}"></span>
+                                </td>
+                                <td th:text="${p.responsavel.nome}"></td>
+                                <td th:text="${p.dataInicio}"></td>
+                                <td th:text="${p.dataFim != null} ? ${p.dataFim} : '—'"></td>
+                                <td class="text-end">
+                                    <a th:href="@{/app/projetos/{id}/editar(id=${p.id})}"
+                                       class="btn btn-sm btn-outline-secondary me-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form th:action="@{/app/projetos/{id}/deletar(id=${p.id})}"
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('Confirmar exclusão?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <th:block th:replace="~{fragments/layout :: paginacao(pagina=${projetos}, urlBase='/app/projetos')}"></th:block>
+
+        </div>
+    </div>
+</div>
+
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.example.gestao.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,8 +26,36 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
+    // Cadeia 1: Web UI com Thymeleaf — form login, sessão
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/app/**")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/app/login").permitAll()
+                        .requestMatchers("/app/usuarios/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/app/login")
+                        .loginProcessingUrl("/app/login")
+                        .defaultSuccessUrl("/app/dashboard", true)
+                        .failureUrl("/app/login?erro=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/app/logout")
+                        .logoutSuccessUrl("/app/login?logout=true")
+                        .permitAll()
+                )
+                .build();
+    }
+
+    // Cadeia 2: REST API — JWT stateless
+    @Bean
+    @Order(2)
+    public SecurityFilterChain restFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

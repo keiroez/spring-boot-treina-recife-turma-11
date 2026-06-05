@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+
+<th:block th:replace="~{fragments/layout :: navbar}"></th:block>
+
+<div class="container-fluid">
+    <div class="row g-0">
+        <div class="col-md-2">
+            <th:block th:replace="~{fragments/layout :: sidebar(activePage='dashboard')}"></th:block>
+        </div>
+        <div class="col-md-10 main-content">
+
+            <div class="page-header">
+                <h4 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h4>
+            </div>
+
+            <!-- Cards de resumo -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <div class="rounded-3 p-3 bg-primary bg-opacity-10">
+                                <i class="bi bi-folder2-open fs-3 text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="fs-2 fw-bold" th:text="${totalProjetos}">0</div>
+                                <div class="text-muted small">Projetos cadastrados</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <div class="rounded-3 p-3 bg-success bg-opacity-10">
+                                <i class="bi bi-check2-square fs-3 text-success"></i>
+                            </div>
+                            <div>
+                                <div class="fs-2 fw-bold" th:text="${totalTarefas}">0</div>
+                                <div class="text-muted small">Tarefas cadastradas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <div class="rounded-3 p-3 bg-warning bg-opacity-10">
+                                <i class="bi bi-people fs-3 text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="fs-2 fw-bold" th:text="${totalUsuarios}">0</div>
+                                <div class="text-muted small">Usuários cadastrados</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <!-- Projetos recentes -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-folder2-open me-2"></i>Projetos Recentes</span>
+                            <a href="/app/projetos" class="btn btn-sm btn-outline-primary">Ver todos</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div th:if="${#lists.isEmpty(recentesProjetos)}" class="p-3 text-muted text-center small">
+                                Nenhum projeto cadastrado ainda.
+                            </div>
+                            <ul class="list-group list-group-flush" th:if="${!#lists.isEmpty(recentesProjetos)}">
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    th:each="p : ${recentesProjetos}">
+                                    <div>
+                                        <div class="fw-semibold" th:text="${p.nome}">Projeto</div>
+                                        <small class="text-muted" th:text="${p.responsavel.nome}">Responsável</small>
+                                    </div>
+                                    <span class="badge rounded-pill"
+                                          th:classappend="'badge-' + ${p.status}"
+                                          th:text="${p.status}">STATUS</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarefas recentes -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-check2-square me-2"></i>Próximas Tarefas</span>
+                            <a href="/app/tarefas" class="btn btn-sm btn-outline-success">Ver todas</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div th:if="${#lists.isEmpty(recentesTarefas)}" class="p-3 text-muted text-center small">
+                                Nenhuma tarefa cadastrada ainda.
+                            </div>
+                            <ul class="list-group list-group-flush" th:if="${!#lists.isEmpty(recentesTarefas)}">
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    th:each="t : ${recentesTarefas}">
+                                    <div>
+                                        <div class="fw-semibold" th:text="${t.titulo}">Tarefa</div>
+                                        <small class="text-muted"
+                                               th:text="${t.projeto.nome} + ' · ' + ${t.dataExecucao}"></small>
+                                    </div>
+                                    <span class="badge rounded-pill"
+                                          th:classappend="'badge-' + ${t.prioridade}"
+                                          th:text="${t.prioridade}">PRIORIDADE</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

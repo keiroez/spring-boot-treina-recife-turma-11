@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+
+<!-- FRAGMENT: head -->
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' — Gestão de Projetos'">Gestão de Projetos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar {
+            min-height: 100vh;
+            background: #212529;
+            padding-top: 1rem;
+        }
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: .5rem 1.25rem;
+            border-radius: .375rem;
+            margin: .1rem .5rem;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link i { margin-right: .5rem; }
+        .sidebar .section-label {
+            color: #6c757d;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            padding: .75rem 1.25rem .25rem;
+        }
+        .main-content { padding: 1.5rem; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .badge-PLANEJADO    { background-color: #0dcaf0; color: #000; }
+        .badge-EM_ANDAMENTO { background-color: #0d6efd; }
+        .badge-CONCLUIDO    { background-color: #198754; }
+        .badge-CANCELADO    { background-color: #dc3545; }
+        .badge-PENDENTE     { background-color: #6c757d; }
+        .badge-FAZENDO      { background-color: #fd7e14; }
+        .badge-CONCLUIDA    { background-color: #198754; }
+        .badge-BAIXA        { background-color: #198754; }
+        .badge-MEDIA        { background-color: #ffc107; color: #000; }
+        .badge-ALTA         { background-color: #dc3545; }
+    </style>
+</head>
+
+<!-- FRAGMENT: navbar -->
+<nav th:fragment="navbar" class="navbar navbar-dark bg-dark px-3 py-2">
+    <a class="navbar-brand fw-bold" href="/app/dashboard">
+        <i class="bi bi-kanban-fill me-2"></i>Gestão
+    </a>
+    <div class="d-flex align-items-center gap-3">
+        <span class="text-light small">
+            <i class="bi bi-person-circle me-1"></i>
+            <span sec:authentication="principal.nome">Usuário</span>
+        </span>
+        <form th:action="@{/app/logout}" method="post" class="m-0">
+            <button type="submit" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right me-1"></i>Sair
+            </button>
+        </form>
+    </div>
+</nav>
+
+<!-- FRAGMENT: sidebar -->
+<div th:fragment="sidebar" class="sidebar d-flex flex-column">
+    <div class="section-label">Menu</div>
+    <nav class="nav flex-column">
+        <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" href="/app/dashboard">
+            <i class="bi bi-speedometer2"></i>Dashboard
+        </a>
+    </nav>
+    <div class="section-label">Gestão</div>
+    <nav class="nav flex-column">
+        <a class="nav-link" th:classappend="${activePage == 'projetos'} ? 'active'" href="/app/projetos">
+            <i class="bi bi-folder2-open"></i>Projetos
+        </a>
+        <a class="nav-link" th:classappend="${activePage == 'tarefas'} ? 'active'" href="/app/tarefas">
+            <i class="bi bi-check2-square"></i>Tarefas
+        </a>
+    </nav>
+    <div sec:authorize="hasRole('ADMIN')">
+        <div class="section-label">Administração</div>
+        <nav class="nav flex-column">
+            <a class="nav-link" th:classappend="${activePage == 'usuarios'} ? 'active'" href="/app/usuarios">
+                <i class="bi bi-people"></i>Usuários
+            </a>
+        </nav>
+    </div>
+</div>
+
+<!-- FRAGMENT: alertas -->
+<div th:fragment="alertas">
+    <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i><span th:text="${sucesso}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i><span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<!-- FRAGMENT: paginacao -->
+<nav th:fragment="paginacao(pagina, urlBase)" th:if="${pagina.totalPages > 1}">
+    <ul class="pagination pagination-sm justify-content-center mt-3">
+        <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+            <a class="page-link" th:href="@{${urlBase}(page=${pagina.number - 1})}">Anterior</a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, pagina.totalPages - 1)}"
+            th:classappend="${i == pagina.number} ? 'active'">
+            <a class="page-link" th:href="@{${urlBase}(page=${i})}" th:text="${i + 1}">1</a>
+        </li>
+        <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+            <a class="page-link" th:href="@{${urlBase}(page=${pagina.number + 1})}">Próximo</a>
+        </li>
+    </ul>
+</nav>
+
+<script th:fragment="scripts"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</html>
