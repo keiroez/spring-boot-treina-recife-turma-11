@@ -64,33 +64,110 @@ CREATE DATABASE gestao_projetos;
 > As tabelas **não** precisam ser criadas manualmente — o Flyway aplica as migrações
 > (`V1__create_usuarios`, `V2__create_projetos`, `V3__create_tarefas`) automaticamente no startup.
 
-### 2. Ajustar credenciais e segredo do JWT
+### 2. Configurar as variáveis de ambiente do banco
 
-A configuração fica em `src/main/resources/application.yaml`:
+A conexão com o banco e o segredo do JWT ficam em `src/main/resources/application.yaml` e
+**não** têm mais valores fixos — vêm **obrigatoriamente** de variáveis de ambiente:
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost/gestao_projetos
-    username: root      # ajuste para o seu usuário MySQL
-    password: root      # ajuste para a sua senha MySQL
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        ddl-auto: validate   # Hibernate apenas valida; o schema é gerido pelo Flyway
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 api:
   security:
     token:
-      secret: 123456    # segredo HMAC usado para assinar o JWT — troque em produção
+      secret: ${JWT_SECRET}
 ```
 
-> **Observação de segurança:** em ambiente real não versione credenciais nem o `secret`.
-> Prefira variáveis de ambiente (ex.: `SPRING_DATASOURCE_USERNAME`,
-> `SPRING_DATASOURCE_PASSWORD`, `API_SECURITY_TOKEN_SECRET`), que sobrescrevem os
-> valores do `application.yaml`.
+| Variável | Descrição | Exemplo |
+|---|---|---|
+| `DB_URL` | URL JDBC do MySQL | `jdbc:mysql://localhost/gestao_projetos` |
+| `DB_USERNAME` | Usuário do MySQL | `root` |
+| `DB_PASSWORD` | Senha do MySQL | `root` |
+| `JWT_SECRET` | Segredo HMAC para assinar o JWT | `umSegredoForteAqui` |
+
+Variáveis **opcionais** (têm default, úteis para debug local):
+
+| Variável | Descrição | Default |
+|---|---|---|
+| `PORT` | Porta HTTP (o Railway define automaticamente) | `8080` |
+| `JPA_SHOW_SQL` | Loga as queries SQL geradas | `false` |
+| `JPA_FORMAT_SQL` | Formata o SQL logado | `false` |
+
+> A aplicação **não sobe** se essas variáveis não estiverem definidas. Por isso elas
+> ficam fora do versionamento (não há valores no `application.yaml`) — cada dev/ambiente
+> define as suas. Configure-as no terminal ou, de forma mais prática, na execução da IDE.
+
+#### Definindo no terminal
+
+```powershell
+# PowerShell (Windows)
+$env:DB_URL = "jdbc:mysql://localhost/gestao_projetos"
+$env:DB_USERNAME = "root"
+$env:DB_PASSWORD = "root"
+$env:JWT_SECRET = "umSegredoForteAqui"
+mvn spring-boot:run
+```
+
+```bash
+# Bash (Linux/macOS)
+export DB_URL="jdbc:mysql://localhost/gestao_projetos"
+export DB_USERNAME="root"
+export DB_PASSWORD="root"
+export JWT_SECRET="umSegredoForteAqui"
+mvn spring-boot:run
+```
+
+#### Definindo na IDE
+
+**IntelliJ IDEA**
+
+1. Menu **Run → Edit Configurations…**
+2. Selecione a configuração da aplicação (`GestaoApplication`).
+3. Em **Environment variables**, clique no ícone à direita e adicione cada par
+   `NOME=valor` (ou cole tudo separado por `;`):
+   ```
+   DB_URL=jdbc:mysql://localhost/gestao_projetos;DB_USERNAME=root;DB_PASSWORD=root;JWT_SECRET=umSegredoForteAqui
+   ```
+4. **Apply → OK** e rode normalmente.
+
+**VS Code** (extensões *Extension Pack for Java* / *Spring Boot Dashboard*)
+
+1. Abra (ou crie) `.vscode/launch.json` em **Run and Debug → create a launch.json file**.
+2. Na configuração de tipo `java`, adicione o bloco `env`:
+   ```jsonc
+   {
+     "type": "java",
+     "name": "GestaoApplication",
+     "request": "launch",
+     "mainClass": "com.app.gestao.GestaoApplication",
+     "env": {
+       "DB_URL": "jdbc:mysql://localhost/gestao_projetos",
+       "DB_USERNAME": "root",
+       "DB_PASSWORD": "root",
+       "JWT_SECRET": "umSegredoForteAqui"
+     }
+   }
+   ```
+   > `.vscode/` está no `.gitignore`, então essas credenciais não vão para o repositório.
+
+**Eclipse / Spring Tool Suite (STS)**
+
+1. Menu **Run → Run Configurations…**
+2. Selecione a configuração da aplicação (em *Java Application* ou *Spring Boot App*).
+3. Aba **Environment → New…** e adicione uma variável por vez:
+   - `DB_URL` = `jdbc:mysql://localhost/gestao_projetos`
+   - `DB_USERNAME` = `root`
+   - `DB_PASSWORD` = `root`
+   - `JWT_SECRET` = `umSegredoForteAqui`
+4. **Apply → Run**.
+
+> **Observação de segurança:** o `JWT_SECRET` é a chave que assina os tokens — use um valor
+> longo e aleatório, mantenha-o secreto e use segredos diferentes por ambiente. Nunca
+> versione credenciais reais.
 
 ---
 
@@ -113,12 +190,20 @@ mvn test -Dtest=NomeDaClasse
 java -jar target/demo-0.0.1-SNAPSHOT.jar
 ```
 
-A aplicação sobe em **http://localhost:8080**.
+A aplicação sobe em **http://localhost:8080** e todos os endpoints ficam sob o
+prefixo **`/api/v1`** (definido por `server.servlet.context-path`).
 
 ### Documentação interativa (Swagger)
 
-- Swagger UI: **http://localhost:8080/swagger-ui.html**
-- OpenAPI JSON: **http://localhost:8080/v3/api-docs**
+- Swagger UI: **http://localhost:8080/api/v1/swagger-ui.html**
+- OpenAPI JSON: **http://localhost:8080/api/v1/v3/api-docs**
+
+### Health check
+
+Endpoint público (sem token) exposto pelo Spring Boot Actuator, usado pelo Railway para
+monitorar a aplicação:
+
+- **http://localhost:8080/api/v1/actuator/health** → `{"status":"UP"}`
 
 No Swagger, use o botão **Authorize** e informe o token no formato `Bearer <token>` (esquema `bearer-key`).
 
@@ -197,7 +282,7 @@ prefixo `ROLE_`, as anotações usam `hasRole('USER')` / `hasRole('ADMIN')`.
 
 ## Endpoints
 
-> Base URL: `http://localhost:8080`. Salvo indicação em contrário, todas as rotas exigem
+> Base URL: `http://localhost:8080/api/v1`. Salvo indicação em contrário, todas as rotas exigem
 > `Authorization: Bearer <token>`. Listagens são paginadas (`?page=`, `?size=`, `?sort=`).
 
 ### Autenticação — `/login`
@@ -260,17 +345,17 @@ prefixo `ROLE_`, as anotações usam `hasRole('USER')` / `hasRole('ADMIN')`.
 
 ```bash
 # 1. Cadastrar um usuário (público)
-curl -X POST http://localhost:8080/usuarios \
+curl -X POST http://localhost:8080/api/v1/usuarios \
   -H "Content-Type: application/json" \
   -d '{"nome":"Admin","email":"admin@example.com","senha":"123456","role":"ROLE_ADMIN"}'
 
 # 2. Login → obter token
-curl -X POST http://localhost:8080/login \
+curl -X POST http://localhost:8080/api/v1/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","senha":"123456"}'
 # resposta: { "token": "eyJhbGciOi..." }
 
 # 3. Usar o token nas rotas protegidas
-curl http://localhost:8080/projetos \
+curl http://localhost:8080/api/v1/projetos \
   -H "Authorization: Bearer eyJhbGciOi..."
 ```
