@@ -198,6 +198,14 @@ prefixo **`/api/v1`** (definido por `server.servlet.context-path`).
 - Swagger UI: **http://localhost:8080/api/v1/swagger-ui.html**
 - OpenAPI JSON: **http://localhost:8080/api/v1/v3/api-docs**
 
+Os endpoints são divididos em **dois grupos** (via `GroupedOpenApi` em `OpenApiConfig`),
+selecionáveis no canto superior direito do Swagger UI (*Select a definition*):
+
+| Grupo | Conteúdo | OpenAPI JSON |
+|---|---|---|
+| **public** | Endpoints públicos (`/public/**`), sem necessidade de token — exibidos **sem** o cadeado JWT | `…/v3/api-docs/public` |
+| **private** | Todos os demais endpoints (`/login`, `/usuarios`, `/projetos`, `/tarefas`), que exigem `Bearer <token>` | `…/v3/api-docs/private` |
+
 ### Health check
 
 Endpoint público (sem token) exposto pelo Spring Boot Actuator, usado pelo Railway para
