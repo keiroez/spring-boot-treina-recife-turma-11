@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,5 +24,29 @@ public class OpenApiConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")));
+    }
+
+    @Bean
+    public GroupedOpenApi publicApi() {
+        return GroupedOpenApi.builder()
+                .group("public")
+                .pathsToMatch("/public/**")
+                // Endpoints públicos não exigem autenticação: remove o esquema/cadeado JWT deste grupo.
+                .addOpenApiCustomizer(openApi -> {
+                    if (openApi.getComponents() != null) {
+                        openApi.getComponents().setSecuritySchemes(null);
+                    }
+                    openApi.setSecurity(null);
+                })
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi privateApi() {
+        return GroupedOpenApi.builder()
+                .group("private")
+                .pathsToMatch("/**")
+                .pathsToExclude("/public/**")
+                .build();
     }
 }
